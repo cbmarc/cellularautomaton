@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dypw7ilwgwsrh"]
+
+[ext_resource type="Script" uid="uid://hslsvais3fkc" path="res://scenes/main.gd" id="1_o5qli"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_o5qli")
+MAP_HEIGHT = 100
+MAP_WIDTH = 100
