@@ -6,6 +6,7 @@ extends Node2D
 
 func _ready() -> void:
 	var noise_grid = make_noise_grid(60)
+	apply_cellular_automata(noise_grid, 8)
 	print_noise_grid(noise_grid)
 
 func initialize_2d_array(width: int, height: int, default_value = null) -> Array:
@@ -27,8 +28,8 @@ func make_noise_grid(density: int):
 	if MAP_WIDTH == null:
 		return
 	var noise_grid = initialize_2d_array(MAP_HEIGHT, MAP_WIDTH)
-	for i in range(MAP_HEIGHT -1):
-		for j in range(MAP_WIDTH -1):
+	for i in range(MAP_HEIGHT):
+		for j in range(MAP_WIDTH):
 			var random = randi() % 100 + 1
 
 			if random > density:
@@ -38,8 +39,36 @@ func make_noise_grid(density: int):
 	return noise_grid
 	
 # Step 2
-func apply_cellular_automaton(grid: Array, count: int):
-	pass
+func apply_cellular_automata(grid: Array, iterations: int) -> void:
+	for i in range(iterations):
+		var grid_iteration: Array = grid.duplicate(true)
+
+		for j in range(MAP_HEIGHT):
+			for k in range(MAP_WIDTH): 
+				var neighbor_wall_count := 0
+				var border := false
+
+				for y in range(j - 1, j + 2): 
+					for x in range(k - 1, k + 2):
+						if y >= 0 and x >= 0 and y < MAP_HEIGHT and x < MAP_WIDTH:
+							if y != j or x != k:
+								if grid_iteration[y][x] == 'X':
+									neighbor_wall_count += 1
+						else:
+							border = true
+				
+				if neighbor_wall_count > 4 or border:
+					grid[j][k] = 'X'
+				else:
+					grid[j][k] = ' '
+
+
+func is_within_map_bounds(x: int, y: int):
+	if x < 0: return false
+	if x >= MAP_WIDTH: return false
+	if y < 0: return false
+	if y >= MAP_HEIGHT: return false
+	return true
 	
 func print_noise_grid(noise_grid: Array):
 	var grid: String = ""
